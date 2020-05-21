@@ -67,7 +67,8 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
 
             [Required]
-            public string Role { get; set; }
+            public string Role { get; set; }  //unable to type in this field.  Use a drop down?
+
         }
 
         public async Task OnGetAsync(string returnUrl = null)

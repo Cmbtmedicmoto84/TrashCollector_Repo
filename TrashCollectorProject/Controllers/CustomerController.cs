@@ -1,42 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TrashCollectorProject.ActionFilters;
+using TrashCollectorProject.Data;
+using TrashCollectorProject.Models;
 
 namespace TrashCollectorProject.Controllers
 {
+    [ServiceFilter(typeof(GlobalRouting))]
+    [Authorize(Roles = "Customer")]
     public class CustomerController : Controller
     {
-        // GET: Customer
-        public ActionResult Index()
+        readonly ApplicationDbContext db;
+
+        public CustomerController(ApplicationDbContext dbContext)
         {
-            return View();
+            db = dbContext;
+        }
+
+        // GET: Customer
+        public ActionResult Index()  //make so that the customer can only see their own information
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = db.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            return View(customer);
         }
 
         // GET: Customer/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details()
         {
-            return View();
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = db.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            return View(customer);
         }
 
         // GET: Customer/Create
         public ActionResult Create()
         {
-            return View();
+            Customer customer = new Customer();
+            return View(customer);
         }
 
         // POST: Customer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create([Bind("Id", "FirstName", "LastName", "ZipCode")] Customer customer) //added Create method @ 2:26pm 05/21
         {
             try
             {
                 // TODO: Add insert logic here
-
-                return RedirectToAction(nameof(Index));
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                customer.IdentityUserId = userId;          
+                db.Customers.Add(customer);
+                db.SaveChanges();
+                return RedirectToAction("Index");
             }
             catch
             {

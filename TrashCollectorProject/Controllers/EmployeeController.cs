@@ -4,15 +4,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TrashCollectorProject.ActionFilters;
+using TrashCollectorProject.Data;
 
 namespace TrashCollectorProject.Controllers
 {
+    [ServiceFilter(typeof(GlobalRouting))]
     public class EmployeeController : Controller
     {
+        readonly ApplicationDbContext db;
+
+        public EmployeeController(ApplicationDbContext dbContext)
+        {
+            db = dbContext;
+        }
+        
+        
         // GET: Employee
         public ActionResult Index()
         {
-            return View();
+            var employees = db.Employees.ToList();
+            return View(employees);
         }
 
         // GET: Employee/Details/5
