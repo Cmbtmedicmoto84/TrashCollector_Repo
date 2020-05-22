@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TrashCollectorProject.ActionFilters;
 using TrashCollectorProject.Data;
 using TrashCollectorProject.Models;
@@ -40,7 +41,7 @@ namespace TrashCollectorProject.Controllers
         }
 
         // GET: Customer/Create
-        public ActionResult Create()
+        public IActionResult Create()
         {
             Customer customer = new Customer();
             return View(customer);
@@ -49,7 +50,7 @@ namespace TrashCollectorProject.Controllers
         // POST: Customer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("Id", "FirstName", "LastName", "ZipCode")] Customer customer) //added Create method @ 2:26pm 05/21
+        public IActionResult Create([Bind("Id", "FirstName", "LastName", "Email", "Role", "ZipCode")] Customer customer) //added Create method @ 2:26pm 05/21
         {
             try
             {
@@ -64,6 +65,7 @@ namespace TrashCollectorProject.Controllers
             {
                 return View();
             }
+
         }
 
         // GET: Customer/Edit/5

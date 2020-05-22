@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TrashCollectorProject.ActionFilters;
 using TrashCollectorProject.Data;
+using TrashCollectorProject.Models;
 
 namespace TrashCollectorProject.Controllers
 {
     [ServiceFilter(typeof(GlobalRouting))]
+    //[Authorize(Roles = "Employee")]
     public class EmployeeController : Controller
     {
         readonly ApplicationDbContext db;
@@ -23,8 +27,12 @@ namespace TrashCollectorProject.Controllers
         // GET: Employee
         public ActionResult Index()
         {
-            var employees = db.Employees.ToList();
-            return View(employees);
+            //Find currently logged in employee so we can find their zipcode
+            //Then we can alter the var customers query below so that we can find just the customers in logged in employee's zipcdoe
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var employee = db.Employees.Where(e => e.IdentityUserId == userId).SingleOrDefault();
+            var customers = db.Customers.ToList();
+            return View("Customer");  //change to customer before finshing
         }
 
         // GET: Employee/Details/5
@@ -42,13 +50,16 @@ namespace TrashCollectorProject.Controllers
         // POST: Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create([Bind("FirstName", "LastName", "EmployeeId", "Role", "ZipCode")]Employee employee)
         {
             try
             {
                 // TODO: Add insert logic here
-
-                return RedirectToAction(nameof(Index));
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                employee.IdentityUserId = userId;
+                db.Employees.Add(employee);
+                db.SaveChanges();
+                return RedirectToAction("Log in");
             }
             catch
             {

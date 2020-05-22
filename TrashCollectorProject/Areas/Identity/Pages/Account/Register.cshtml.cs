@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
+        
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -42,7 +44,7 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
 
         [BindProperty]
         public InputModel Input { get; set; }
-        public SelectList Roles { get; set; }
+        public SelectList Role { get; set; }
 
         public string ReturnUrl { get; set; }
 
@@ -50,8 +52,7 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            internal string roles;
-
+            
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -60,7 +61,7 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
+            [Display(Name = "Password (Must include: One capital alpanumeric character 'a-z', One number '0-9' and one NON-alphanumeric character '@, &, $, %' | Minimum of 6 characters, Maximum of 100 characters")]
             public string Password { get; set; }
 
             [DataType(DataType.Password)]
@@ -69,16 +70,17 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
 
             [Required]
-            public SelectList Role { get; set; }  //unable to type in this field.  Use a drop down?
-
+            public string Role { get; set; }  
+            
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
+        
+        public async Task OnGetAsync(string returnUrl = null) 
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             var roles = _roleManager.Roles;
-            Roles = new SelectList(roles, "Employee", "Customer");
+            Role = new SelectList(roles, "Name", "Name");
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -91,9 +93,9 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
-                    if(await _roleManager.RoleExistsAsync(Input.roles))
+                    if(await _roleManager.RoleExistsAsync(Input.Role)) 
                     {
-                        await _userManager.AddToRoleAsync(user, Input.roles);
+                        await _userManager.AddToRoleAsync(user, Input.Role);
                     }
                     _logger.LogInformation("User created a new account with password.");
 

@@ -21,6 +21,7 @@ namespace TrashCollectorProject.Data
 
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<IdentityRole> IdentityRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -32,6 +33,28 @@ namespace TrashCollectorProject.Data
                     {
                         Name = "Admin",
                         NormalizedName = "ADMIN"
+                    }
+                );
+
+            base.OnModelCreating(builder);
+
+            builder.Entity<IdentityRole>()
+                .HasData(
+                    new IdentityRole
+                    {
+                        Name = "Customer",
+                        NormalizedName = "CUSTOMER"
+                    }
+                );
+
+            base.OnModelCreating(builder);
+
+            builder.Entity<IdentityRole>()
+                .HasData(
+                    new IdentityRole
+                    {
+                        Name = "Employee",
+                        NormalizedName = "EMPLOYEE"
                     }
                 );
         }
