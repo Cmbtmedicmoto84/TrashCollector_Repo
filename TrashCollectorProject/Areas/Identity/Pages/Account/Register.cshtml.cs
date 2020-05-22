@@ -50,6 +50,8 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
 
         public class InputModel
         {
+            internal string roles;
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -67,7 +69,7 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
 
             [Required]
-            public string Role { get; set; }  //unable to type in this field.  Use a drop down?
+            public SelectList Role { get; set; }  //unable to type in this field.  Use a drop down?
 
         }
 
@@ -76,7 +78,7 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             var roles = _roleManager.Roles;
-            Roles = new SelectList(roles, "Name", "Name");
+            Roles = new SelectList(roles, "Employee", "Customer");
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -89,9 +91,9 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
-                    if(await _roleManager.RoleExistsAsync(Input.Role))
+                    if(await _roleManager.RoleExistsAsync(Input.roles))
                     {
-                        await _userManager.AddToRoleAsync(user, Input.Role);
+                        await _userManager.AddToRoleAsync(user, Input.roles);
                     }
                     _logger.LogInformation("User created a new account with password.");
 
