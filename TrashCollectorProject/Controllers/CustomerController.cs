@@ -28,64 +28,60 @@ namespace TrashCollectorProject.Controllers
         public ActionResult Index()  //make so that the customer can only see their own information
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customer = db.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            var customers = db.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            var customer = db.Customers.ToList();
             return View(customer);
         }
 
         // GET: Customer/Details/5
-        public ActionResult Details()
+        public ActionResult Details(Customer customer)
         {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customer = db.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            var customers = new Customer();
             return View(customer);
         }
 
         // GET: Customer/Create
         public IActionResult Create()
         {
-            Customer customer = new Customer();
-            return View(customer);
+            Customer customers = new Customer();
+            return View(customers);
         }
 
         // POST: Customer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id", "FirstName", "LastName", "Email", "ZipCode", "WeeklyPickUpDay")] Customer customer) //added Create method @ 2:26pm 05/21
+        public IActionResult Create([Bind("Id", "FirstName", "LastName", "Email", "ZipCode", "WeeklyPickUpDay")] Customer customers) //added Create method @ 2:26pm 05/21
         {
             try
             {
-                // TODO: Add insert logic here
-                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                customer.IdentityUserId = userId;          
-                db.Customers.Add(customer);
+                db.Customers.Add(customers);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index"); //not redirecting properly
             }
             catch
             {
                 return View();
             }
-
         }
 
         // GET: Customer/Edit/5
-        public ActionResult Edit()
+        public ActionResult Edit(int id)
         {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customer = db.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
-            return View(customer);
+            var customersInDb = db.Customers.Where(c => c.Id == id).FirstOrDefault();
+            return View(customersInDb);
         }
 
         // POST: Customer/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Customer customer)
+        public ActionResult Edit(int id, Customer customers)
         {
+            var customersInDb = db.Customers.Where(c => c.Id == id).FirstOrDefault();
+            Customer customer = null;
             try
             {
                 // TODO: Add update logic here
-                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                customer.IdentityUserId = userId;
+                customer.WeeklyPickUpDay = Request.Form["WeeklyPickUpDay"];
                 db.Customers.Update(customer);
                 db.SaveChanges();
 
@@ -98,26 +94,26 @@ namespace TrashCollectorProject.Controllers
         }
 
         // GET: Customer/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+        //public ActionResult Delete(int id)
+        //{
+        //    return View();
+        //}
 
-        // POST: Customer/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
+        //// POST: Customer/Delete/5
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Delete(int id, IFormCollection collection)
+        //{
+        //    try
+        //    {
+        //        // TODO: Add delete logic here
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    catch
+        //    {
+        //        return View();
+        //    }
+        //}
     }
 }

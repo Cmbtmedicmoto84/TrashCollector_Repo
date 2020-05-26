@@ -50,9 +50,21 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-        public class InputModel
+        public class InputModel  //added firstname, lastname, postalcode and preferedpickupday 5/26 @1:56pm
         {
-            
+            [Required]
+            public string Role { get; set; }
+
+            [Required]
+            [FirstName]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [LastName]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -70,8 +82,31 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
 
             [Required]
-            public string Role { get; set; }  
+            [StringLength(10, ErrorMessage = "Postal code must be a minimum of 5 digits long.", MinimumLength = 5)]
+            [DataType(DataType.PostalCode)]
+            [Display(Name = "Postal code")]
+            public string PostalCode { get; set; }
+
+            [Required]
+            [WeeklyPickUpDay]
+            [Display(Name = "Prefered pick-up day")]
+            public string PreferedPickUpDay { get; set; }
+
             
+
+            
+
+            private class FirstNameAttribute : Attribute
+            {
+            }
+
+            private class LastNameAttribute : Attribute
+            {
+            }
+
+            private class WeeklyPickUpDayAttribute : Attribute
+            {
+            }
         }
 
         
