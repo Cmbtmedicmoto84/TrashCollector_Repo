@@ -12,8 +12,7 @@ using TrashCollectorProject.Models;
 
 namespace TrashCollectorProject.Controllers
 {
-    [ServiceFilter(typeof(GlobalRouting))]
-    //[Authorize(Roles = "Employee")]
+    [Authorize(Roles = "Employee")]
     public class EmployeeController : Controller
     {
         readonly ApplicationDbContext db;

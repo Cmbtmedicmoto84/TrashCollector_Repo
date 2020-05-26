@@ -20,8 +20,6 @@ namespace TrashCollectorProject.Models
 
         public string Email { get; set; }
 
-        public string Role { get; set; }
-
         public int ZipCode { get; set; }
 
         public string WeeklyPickUpDay { get; set; }

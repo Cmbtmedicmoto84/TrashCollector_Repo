@@ -19,8 +19,6 @@ namespace TrashCollectorProject.Models
 
         public int EmployeeId { get; set; }
 
-        public string UserRole { get; set; }
-
         public int ZipCode { get; set; }
 
         [ForeignKey("IdentityUser")]

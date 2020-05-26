@@ -13,7 +13,6 @@ using TrashCollectorProject.Models;
 
 namespace TrashCollectorProject.Controllers
 {
-    [ServiceFilter(typeof(GlobalRouting))]
     [Authorize(Roles = "Customer")]
     public class CustomerController : Controller
     {
@@ -50,7 +49,7 @@ namespace TrashCollectorProject.Controllers
         // POST: Customer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id", "FirstName", "LastName", "Email", "Role", "ZipCode")] Customer customer) //added Create method @ 2:26pm 05/21
+        public IActionResult Create([Bind("Id", "FirstName", "LastName", "Email", "Role", "ZipCode", "WeeklyPickUpDay")] Customer customer) //added Create method @ 2:26pm 05/21
         {
             try
             {
