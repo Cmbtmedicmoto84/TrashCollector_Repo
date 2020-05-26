@@ -12,7 +12,8 @@ using TrashCollectorProject.Models;
 
 namespace TrashCollectorProject.Controllers
 {
-    [Authorize(Roles = "Employee")]
+    //[ServiceFilter(typeof(GlobalRouting))]
+    //[Authorize(Roles = "Employee")]
     public class EmployeeController : Controller
     {
         readonly ApplicationDbContext db;
@@ -31,7 +32,7 @@ namespace TrashCollectorProject.Controllers
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var employee = db.Employees.Where(e => e.IdentityUserId == userId).SingleOrDefault();
             var customers = db.Customers.ToList();
-            return View("Customer");  //change to customer before finshing
+            return View(customers);  //change to customer before finshing
         }
 
         // GET: Employee/Details/5
@@ -49,7 +50,7 @@ namespace TrashCollectorProject.Controllers
         // POST: Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("FirstName", "LastName", "EmployeeId", "Role", "ZipCode")]Employee employee)
+        public ActionResult Create([Bind("FirstName", "LastName", "EmployeeId", "ZipCode")]Employee employee)
         {
             try
             {

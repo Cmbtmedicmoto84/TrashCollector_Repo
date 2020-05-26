@@ -13,6 +13,7 @@ using TrashCollectorProject.Models;
 
 namespace TrashCollectorProject.Controllers
 {
+    //[ServiceFilter(typeof(GlobalRouting))]
     [Authorize(Roles = "Customer")]
     public class CustomerController : Controller
     {
@@ -49,7 +50,7 @@ namespace TrashCollectorProject.Controllers
         // POST: Customer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id", "FirstName", "LastName", "Email", "Role", "ZipCode", "WeeklyPickUpDay")] Customer customer) //added Create method @ 2:26pm 05/21
+        public IActionResult Create([Bind("Id", "FirstName", "LastName", "Email", "ZipCode", "WeeklyPickUpDay")] Customer customer) //added Create method @ 2:26pm 05/21
         {
             try
             {
@@ -68,21 +69,27 @@ namespace TrashCollectorProject.Controllers
         }
 
         // GET: Customer/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit()
         {
-            return View();
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = db.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            return View(customer);
         }
 
         // POST: Customer/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(Customer customer)
         {
             try
             {
                 // TODO: Add update logic here
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                customer.IdentityUserId = userId;
+                db.Customers.Update(customer);
+                db.SaveChanges();
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
             catch
             {
