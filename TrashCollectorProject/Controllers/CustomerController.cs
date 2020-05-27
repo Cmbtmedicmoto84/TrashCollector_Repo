@@ -7,13 +7,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using TrashCollectorProject.ActionFilters;
 using TrashCollectorProject.Data;
 using TrashCollectorProject.Models;
 
 namespace TrashCollectorProject.Controllers
 {
-    [ServiceFilter(typeof(GlobalRouting))]
+    //[ServiceFilter(typeof(GlobalRouting))]
     //[Authorize(Roles = "Customer")]
     public class CustomerController : Controller
     {
@@ -28,35 +29,40 @@ namespace TrashCollectorProject.Controllers
         public ActionResult Index()  //make so that the customer can only see their own information
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customers = db.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
-            return View(customers);
+            var customer = db.Customers.Where(c => c.IdentityUserId == userId).FirstOrDefault();
+            if (customer == null)
+            {
+                return RedirectToAction("Create");
+            }
+            return View(customer);
         }
 
         // GET: Customer/Details/5
-        public ActionResult Details(Customer customer)
+        public ActionResult Details(int id)
         {
-            var customers = new Customer();
-            return View(customers);
+            var customer = db.Customers.Include(c => c.IdentityUserId).SingleOrDefault(c => c.Id == id);
+            return View(customer);
         }
 
+        [HttpGet]
         // GET: Customer/Create
         public IActionResult Create()
         {
-            Customer customers = new Customer();
-            return View("Create");
+            
+            Customer customer = new Customer();
+            return View(customer);
         }
 
         // POST: Customer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id", "FirstName", "LastName", "Email", "ZipCode", "WeeklyPickUpDay")] Customer customers) //added Create method @ 2:26pm 05/21
+        public IActionResult Create([Bind("Id", "FirstName", "LastName", "Email", "ZipCode", "WeeklyPickUpDay")] Customer customer) //added Create method @ 2:26pm 05/21
         {
             try
             {
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                customers.IdentityUserId = userId;
-                var customer = db.Customers.ToList();
-                db.Customers.Add(customers);
+                customer.IdentityUserId = userId;
+                db.Customers.Add(customer);
                 db.SaveChanges();
                 return RedirectToAction("Index"); //not redirecting properly
             }

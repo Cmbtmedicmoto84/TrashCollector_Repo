@@ -17,7 +17,7 @@ namespace TrashCollectorProject.Controllers
 
         public HomeController(ILogger<HomeController> logger) => _logger = logger;
 
-        [ServiceFilter(typeof(GlobalRouting))]
+        //[ServiceFilter(typeof(GlobalRouting))]
         public IActionResult Index()
         {
             return View();
