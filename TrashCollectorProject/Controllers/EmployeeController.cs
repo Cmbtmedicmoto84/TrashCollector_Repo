@@ -12,7 +12,7 @@ using TrashCollectorProject.Models;
 
 namespace TrashCollectorProject.Controllers
 {
-    //[ServiceFilter(typeof(GlobalRouting))]
+    [ServiceFilter(typeof(GlobalRouting))]
     [Authorize(Roles = "Employee")]
     public class EmployeeController : Controller
     {
@@ -31,8 +31,8 @@ namespace TrashCollectorProject.Controllers
             //Then we can alter the var customers query below so that we can find just the customers in logged in employee's zipcode
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var employee = db.Employees.Where(e => e.IdentityUserId == userId).SingleOrDefault();
-            var customers = db.Customers.ToList();
-            return View(customers);  //change to customer before finshing
+            var customer = db.Customers.ToList();
+            return View(customer);  
         }
 
         // GET: Employee/Details/5
@@ -57,8 +57,8 @@ namespace TrashCollectorProject.Controllers
             try
             {
                 // TODO: Add insert logic here
-                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                employee.IdentityUserId = userId;
+                //var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                //employee.IdentityUserId = userId;
                 db.Employees.Add(employee);
                 db.SaveChanges();
                 return RedirectToAction("View");

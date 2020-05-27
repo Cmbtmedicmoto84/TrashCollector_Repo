@@ -13,8 +13,8 @@ using TrashCollectorProject.Models;
 
 namespace TrashCollectorProject.Controllers
 {
-    //[ServiceFilter(typeof(GlobalRouting))]
-    [Authorize(Roles = "Customer")]
+    [ServiceFilter(typeof(GlobalRouting))]
+    //[Authorize(Roles = "Customer")]
     public class CustomerController : Controller
     {
         readonly ApplicationDbContext db;
@@ -29,8 +29,7 @@ namespace TrashCollectorProject.Controllers
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customers = db.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
-            var customer = db.Customers.ToList();
-            return View(customer);
+            return View(customers);
         }
 
         // GET: Customer/Details/5
@@ -44,7 +43,7 @@ namespace TrashCollectorProject.Controllers
         public IActionResult Create()
         {
             Customer customers = new Customer();
-            return View(customers);
+            return View("Create");
         }
 
         // POST: Customer/Create
@@ -54,6 +53,9 @@ namespace TrashCollectorProject.Controllers
         {
             try
             {
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                customers.IdentityUserId = userId;
+                var customer = db.Customers.ToList();
                 db.Customers.Add(customers);
                 db.SaveChanges();
                 return RedirectToAction("Index"); //not redirecting properly

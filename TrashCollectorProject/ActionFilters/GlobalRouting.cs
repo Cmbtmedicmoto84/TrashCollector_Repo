@@ -23,12 +23,12 @@ namespace TrashCollectorProject.ActionFilters
                 if (_claimsPrincipal.IsInRole("Customer"))
                 {
                     context.Result = new RedirectToActionResult("Index",
-                    "Customer", null);
+                    "Customers", null);
                 }
                 else if (_claimsPrincipal.IsInRole("Employee"))
                 {
                     context.Result = new RedirectToActionResult("Index",
-                    "Employee", null);
+                    "Employees", null);
                 }
             }
         }

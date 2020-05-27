@@ -10,12 +10,6 @@ namespace TrashCollectorProject.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
-        internal IEnumerable<object> AspNetUsers;
-
-        public ApplicationDbContext()
-        { 
-        }
-
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
