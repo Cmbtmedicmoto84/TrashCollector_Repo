@@ -87,7 +87,6 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
             [Display(Name = "Postal code")]
             public string PostalCode { get; set; }
 
-            [Required]
             [WeeklyPickUpDay]
             [Display(Name = "Prefered pick-up day")]
             public string PreferedPickUpDay { get; set; }

@@ -13,7 +13,7 @@ using TrashCollectorProject.Models;
 namespace TrashCollectorProject.Controllers
 {
     //[ServiceFilter(typeof(GlobalRouting))]
-    //[Authorize(Roles = "Employee")]
+    [Authorize(Roles = "Employee")]
     public class EmployeeController : Controller
     {
         readonly ApplicationDbContext db;
@@ -28,7 +28,7 @@ namespace TrashCollectorProject.Controllers
         public ActionResult Index()
         {
             //Find currently logged in employee so we can find their zipcode
-            //Then we can alter the var customers query below so that we can find just the customers in logged in employee's zipcdoe
+            //Then we can alter the var customers query below so that we can find just the customers in logged in employee's zipcode
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var employee = db.Employees.Where(e => e.IdentityUserId == userId).SingleOrDefault();
             var customers = db.Customers.ToList();
@@ -38,13 +38,15 @@ namespace TrashCollectorProject.Controllers
         // GET: Employee/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var employee = new Employee();
+            return View(employee);
         }
 
         // GET: Employee/Create
         public ActionResult Create()
         {
-            return View();
+            Employee employee = new Employee();
+            return View(employee);
         }
 
         // POST: Employee/Create
@@ -59,7 +61,7 @@ namespace TrashCollectorProject.Controllers
                 employee.IdentityUserId = userId;
                 db.Employees.Add(employee);
                 db.SaveChanges();
-                return RedirectToAction("Log in");
+                return RedirectToAction("View");
             }
             catch
             {

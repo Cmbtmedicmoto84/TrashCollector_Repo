@@ -37,7 +37,7 @@ namespace TrashCollectorProject.Controllers
         public ActionResult Details(Customer customer)
         {
             var customers = new Customer();
-            return View(customer);
+            return View(customers);
         }
 
         // GET: Customer/Create
