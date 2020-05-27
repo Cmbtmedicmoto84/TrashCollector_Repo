@@ -25,7 +25,7 @@ namespace TrashCollectorProject.Controllers
         
         
         // GET: Employee
-        public ActionResult Index()
+        public IActionResult Index()
         {
             //Find currently logged in employee so we can find their zipcode
             //Then we can alter the var customers query below so that we can find just the customers in logged in employee's zipcode
@@ -40,14 +40,14 @@ namespace TrashCollectorProject.Controllers
         }
 
         // GET: Employee/Details/5
-        public ActionResult Details(int id)
+        public IActionResult Details(int id)
         {
             var employee = new Employee();
             return View("Index");
         }
 
         // GET: Employee/Create
-        public ActionResult Create()
+        public IActionResult Create()
         {
             Employee employee = new Employee();
             return View(employee);
@@ -56,7 +56,7 @@ namespace TrashCollectorProject.Controllers
         // POST: Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("FirstName", "LastName", "EmployeeId", "ZipCode")]Employee employee)
+        public IActionResult Create([Bind("FirstName", "LastName", "EmployeeId", "ZipCode")]Employee employee)
         {
             try
             {
@@ -74,21 +74,26 @@ namespace TrashCollectorProject.Controllers
         }
 
         // GET: Employee/Edit/5
-        public ActionResult Edit(int id)
+        public IActionResult Edit(int id)
         {
-            return View();
+            var customersInDb = db.Customers.Where(c => c.Id == id).FirstOrDefault();
+            return View(customersInDb);
         }
 
         // POST: Employee/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public IActionResult Edit(int id, Customer customers)
         {
+            var customersInDb = db.Customers.Where(c => c.Id == id).FirstOrDefault();
+            Customer customer = null;
             try
             {
                 // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
+                customer.WeeklyPickUpDay = Request.Form["WeeklyPickUpDay"];
+                db.Customers.Update(customer);
+                db.SaveChanges();
+                return RedirectToAction("Index");
             }
             catch
             {

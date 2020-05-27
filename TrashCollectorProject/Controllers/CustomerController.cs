@@ -48,7 +48,6 @@ namespace TrashCollectorProject.Controllers
         // GET: Customer/Create
         public IActionResult Create()
         {
-            
             Customer customer = new Customer();
             return View(customer);
         }
@@ -73,7 +72,7 @@ namespace TrashCollectorProject.Controllers
         }
 
         // GET: Customer/Edit/5
-        public ActionResult Edit(int id)
+        public IActionResult Edit(int id)
         {
             var customersInDb = db.Customers.Where(c => c.Id == id).FirstOrDefault();
             return View(customersInDb);
@@ -82,7 +81,7 @@ namespace TrashCollectorProject.Controllers
         // POST: Customer/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Customer customers)
+        public IActionResult Edit(int id, Customer customers)
         {
             var customersInDb = db.Customers.Where(c => c.Id == id).FirstOrDefault();
             Customer customer = null;
@@ -92,7 +91,6 @@ namespace TrashCollectorProject.Controllers
                 customer.WeeklyPickUpDay = Request.Form["WeeklyPickUpDay"];
                 db.Customers.Update(customer);
                 db.SaveChanges();
-
                 return RedirectToAction("Index");
             }
             catch
@@ -101,27 +99,28 @@ namespace TrashCollectorProject.Controllers
             }
         }
 
-        // GET: Customer/Delete/5
-        //public ActionResult Delete(int id)
-        //{
-        //    return View();
-        //}
+        //GET: Customer/Delete/5
+        public IActionResult Delete(int id)
+        {
+            var customersInDb = db.Customers.Where(c => c.Id == id).FirstOrDefault();
+            return View();
+        }
 
-        //// POST: Customer/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Delete(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        // TODO: Add delete logic here
+        // POST: Customer/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id, Customer customer)
+        {
+            try
+            {
+                // TODO: Add delete logic here
 
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
     }
 }
